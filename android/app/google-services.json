@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "342229586584",
+    "project_id": "amaxi-51d05",
+    "storage_bucket": "amaxi-51d05.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:342229586584:android:4fb810983e74bd162976ed",
+        "android_client_info": {
+          "package_name": "com.example.amaxi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "342229586584-gcdieac35ed3pkmkuqpurumfndgk9ppt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD359pL2WsKIFLwYiLUONHtV5HCQT8vXWE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "342229586584-gcdieac35ed3pkmkuqpurumfndgk9ppt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
