@@ -41,14 +41,14 @@ dependencies:
   lottie: ^1.4.3
 
   # Firebase
-  firebase_auth: ^3.11.1
-  firebase_core: ^1.24.0
+  firebase_auth: ^4.2.4
+  firebase_core: ^2.4.1
 
   # Flutter Toast
   fluttertoast: ^8.1.1
 
   # Firebase database
-  cloud_firestore: ^3.5.1
+  cloud_firestore: ^4.3.1
 
   #Uncomment below
   # Google Maps

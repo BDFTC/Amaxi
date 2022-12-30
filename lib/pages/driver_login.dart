@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +20,33 @@ class _driverLoginState extends State<driverLogin> {
   String driver_phone='';
   String driver_car='';
 
+  Future createUser ({required String name, required String email, required String phone, required String driver_car}) async  {
+    final docUser=FirebaseFirestore.instance.collection('drivers').doc();
+
+    final user=User(
+        id: docUser.id,
+        name: name,
+        email: email,
+        phone: phone,
+        driver_car: driver_car
+    );
+    final json=user.toJson();
+    await docUser.set(json);
+  }
+
+  Future writeUser(User user) async {
+    print(1);
+    final docUser = FirebaseFirestore.instance.collection('drivers').doc();
+    print(2);
+    user.id=docUser.id;
+    print(3);
+
+    final json=user.toJson();
+    print(4);
+    await docUser.set(json);
+    print(5);
+  }
+
   Future registerDriver() async{
     showDialog(
         context: context,
@@ -29,6 +57,13 @@ class _driverLoginState extends State<driverLogin> {
     );
     try{
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: driver_email, password: driver_pass);
+      final user=User(
+          name: driver_name,
+          email: driver_email,
+          phone: driver_phone,
+          driver_car: driver_car
+      );
+      writeUser(user);
       Navigator.pushNamed(context, 'driver_login_main');
     } on FirebaseAuthException catch (e){
       Navigator.pop(context);
@@ -176,4 +211,28 @@ class _driverLoginState extends State<driverLogin> {
       ),
     );
   }
+}
+
+class User {
+  String id;
+  final String name;
+  final String email;
+  final String phone;
+  final String driver_car;
+
+  User({
+    this.id='',
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.driver_car,
+  });
+
+  Map<String,dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'email': email,
+    'phone': phone,
+    'driver_car': driver_car,
+  };
 }

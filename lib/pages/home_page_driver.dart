@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class homePageDriver extends StatefulWidget {
+  const homePageDriver({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<homePageDriver> createState() => _homePageDriverState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _homePageDriverState extends State<homePageDriver> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent,
       appBar: AppBar(
-        title: Text('Home Screen User'),
+        title: Text('Home Screen Driver'),
         centerTitle: true,
         backgroundColor: Colors.cyan,
         elevation: 0.0,
@@ -53,15 +53,14 @@ class _HomePageState extends State<HomePage> {
                                     fontWeight: FontWeight.bold
                                 )),
                               ),
-                              SizedBox(height: 20.0),
                               Padding(
                                 padding: const EdgeInsets.only(left: 35.0,right: 35.0,top: 15.0),
                                 child: TextButton.icon(
                                   onPressed: () {
-                                    Navigator.pushNamed(context, 'main_login');
+                                    Navigator.pushNamed(context, 'driver_login_main');
                                   },
-                                  icon: Icon(Icons.person),
-                                  label: Text('User'),
+                                  icon: Icon(Icons.local_taxi),
+                                  label: Text('Driver'),
                                   style: ButtonStyle(
                                       foregroundColor: MaterialStateProperty.all(Colors.white),
                                       backgroundColor: MaterialStateProperty.all(Colors.amber)
@@ -82,15 +81,14 @@ class _HomePageState extends State<HomePage> {
                                     fontWeight: FontWeight.bold
                                 )),
                               ),
-                              SizedBox(height: 20.0),
                               Padding(
                                 padding: const EdgeInsets.only(left: 35.0,right: 35.0,top: 15.0),
                                 child: TextButton.icon(
                                   onPressed: () {
-                                    Navigator.pushNamed(context, 'user_login');
+                                    Navigator.pushNamed(context, 'driver_login');
                                   },
-                                  icon: Icon(Icons.person_add),
-                                  label: Text('User'),
+                                  icon: Icon(Icons.local_taxi_outlined),
+                                  label: Text('Driver'),
                                   style: ButtonStyle(
                                       foregroundColor: MaterialStateProperty.all(Colors.white),
                                       backgroundColor: MaterialStateProperty.all(Colors.amber)
