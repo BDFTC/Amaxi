@@ -1,8 +1,10 @@
 import 'package:amaxi/pages/driver_dashboard.dart';
 import 'package:amaxi/pages/driver_login.dart';
 import 'package:amaxi/pages/home_page.dart';
+import 'package:amaxi/pages/home_page_driver.dart';
 import 'package:amaxi/pages/main_login.dart';
 import 'package:amaxi/pages/main_login_driver.dart';
+import 'package:amaxi/pages/main_screen.dart';
 import 'package:amaxi/pages/user_book.dart';
 import 'package:amaxi/pages/user_dashboard.dart';
 import 'package:amaxi/pages/user_login.dart';
@@ -14,7 +16,7 @@ Future main() async {
   await Firebase.initializeApp();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: 'driver_login',
+    initialRoute: 'main_screen',
     routes: {
       'user_login': (context) => userLogin(), // user register
       'driver_login': (context) => driverLogin(), // driver register
@@ -24,7 +26,8 @@ Future main() async {
       'user_dashboard': (context) => userDashboard(),
       'driver_dashboard': (context) => driverDashboard(),
       'user_book': (context) => userBook(),
-      // 'privacy_policy': (context)=>privacyPolicy()
+      'home_screen_driver': (context) => homePageDriver(),
+      'main_screen': (context) => home(),
     },
   ));
 }
