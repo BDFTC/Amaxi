@@ -2,18 +2,32 @@ import 'package:amaxi/Maps/mapsUtil.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:flutter_map/src/layer/marker_layer.dart' as marker;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import 'package:latlong2/latlong.dart' as latLng;
 import 'package:flutter_map/plugin_api.dart';
 
+class MapMarker {
+        final String? image;
+        final String? title;
+        final latLng.LatLng location;
+
+        MapMarker({
+            this.image,
+            required this.title,
+            required this.location,
+        });
+}
 class AppConstants {
   //anmol get these values
   static double user_lat = 30.641535; // lat of user
   static double user_long = 76.813496; // long of user
-  double hosp_lat = 30.7055; // lat for nearest hospital
-  double hosp_long = 76.8013; // long for nearest hospital
+  static double hosp_lat = 30.7055; // lat for nearest hospital
+  static double hosp_long = 76.8013; // long for nearest hospital
+  static double driver_lat = 30.66332;
+  static double driver_long = 76.8068;
 
   static String user_name = "Varun Kainthla";
 
@@ -22,6 +36,22 @@ class AppConstants {
   static String mapBoxStyleId = 'clcahnp7s000415r4b12il5mr';
 
   static final userLocation = latLng.LatLng(user_lat, user_long);
+
+  static final mapMarkers = [
+    MapMarker(
+        title:'User Location',
+        location: latLng.LatLng(user_lat, user_long),
+    ),
+    MapMarker(
+        //image:'No.jpg',
+        title:'Driver Location',
+        location: latLng.LatLng(driver_lat, driver_long),
+    ),
+    MapMarker(
+        title: "Hospital", 
+        location:latLng.LatLng(hosp_lat, hosp_long)
+    )
+  ];
 }
 
 class userDashboard extends StatefulWidget {
@@ -33,12 +63,28 @@ class userDashboard extends StatefulWidget {
 
 class _userDashboardState extends State<userDashboard> {
 
+  List<marker.Marker> myMarker = <marker.Marker>[];
+
   // Coordinates -> Ready in python model
   void findDriverProcessStart(){
-    print("Pressed");
+
+    setState(() {
+      var mapMarker = AppConstants.mapMarkers;
+      for (var i = 0; i < mapMarker.length; i++) {
+        myMarker.add(
+            marker.Marker(
+                point: mapMarker[i].location,
+                width: 100,
+                height: 100,
+                builder: (context) => Image.asset("assets/marker.png"),
+            )
+        );
+              
+    }
+      print("Pressed BOIIIIIII");
+    });
+
   }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,6 +112,9 @@ class _userDashboardState extends State<userDashboard> {
                    'accessToken': AppConstants.mapBoxAccessToken,
                 },
               ),
+              MarkerLayer(
+                markers : myMarker ,
+              )
             ],
           ),
           ElevatedButton(
