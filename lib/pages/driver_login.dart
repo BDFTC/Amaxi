@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../Widgets/loadingScreen.dart';
+
 class driverLogin extends StatefulWidget {
   const driverLogin({Key? key}) : super(key: key);
 
@@ -18,10 +20,18 @@ class _driverLoginState extends State<driverLogin> {
   String driver_car='';
 
   Future registerDriver() async{
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context){
+          return progressIndicator(message: "Registration in progress");
+        }
+    );
     try{
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: driver_email, password: driver_pass);
       Navigator.pushNamed(context, 'driver_login_main');
     } on FirebaseAuthException catch (e){
+      Navigator.pop(context);
       print(e);
     }
   }

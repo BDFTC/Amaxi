@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import '../Widgets/loadingScreen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 class userLogin extends StatefulWidget {
   const userLogin({Key? key}) : super(key: key);
@@ -17,10 +20,19 @@ class _userLoginState extends State<userLogin> {
   String user_number='';
 
   Future userRegister() async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context){
+          return progressIndicator(message: "Registration in progress");
+        }
+    );
     try{
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: user_email, password: user_pass);
       Navigator.pushNamed(context, 'main_login');
     } on FirebaseAuthException catch (e){
+      Navigator.pop(context);
+      Fluttertoast.showToast(msg: "Cannot register");
       print(e);
     }
   }
