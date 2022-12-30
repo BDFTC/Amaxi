@@ -1,30 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:amaxi/Maps/mapsUtil.dart';
 import 'package:lottie/lottie.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:async';
+import 'package:fluttertoast/fluttertoast.dart';
 
-class driverDashboard extends StatefulWidget {
-  const driverDashboard({Key? key}) : super(key: key);
+class userBook extends StatefulWidget {
+  const userBook({Key? key}) : super(key: key);
 
   @override
-  State<driverDashboard> createState() => _driverDashboardState();
+  State<userBook> createState() => _userBookState();
 }
 
-class _driverDashboardState extends State<driverDashboard> {
+class _userBookState extends State<userBook> {
 
-  // Coordinates -> Ready in python model
-  double ?user_lat=30.641535; // lat of user
-  double ?user_long=76.813496; // long of user
-  double ?hosp_lat=30.7055; // lat for nearest hospital
-  double ?hosp_long=76.8013; // long for nearest hospital
+  int timeLeft=10; // This time will be taken from google maps
+  String text='Your Ambulance will arrive in';
+
+  void _countDown() {
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if(timeLeft>0){
+        setState(() {
+          timeLeft-=1;
+          if(timeLeft==0){
+            text='Your Ambulance has arrived! Hurry Up!';
+          }
+        });
+      }
+      else{
+        timer.cancel();
+        Fluttertoast.showToast(
+            msg: "Your Ambulance has arrived! \nThanks for choosing us!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: Colors.white,
+            textColor: Colors.green,
+            fontSize: 16.0
+        );
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _countDown();
+    print(timeLeft);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent,
       appBar: AppBar(
-        title: Text('User Dashboard'),
+        title: Text('User Book'),
         centerTitle: true,
         backgroundColor: Colors.cyan,
         elevation: 0.0,
@@ -56,47 +85,22 @@ class _driverDashboardState extends State<driverDashboard> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(left: 35.0,right: 35.0,top: 15.0),
-                                child: TextButton.icon(
-                                  onPressed: () {
-                                    // Book Ambulance and show Ambulance is on its way
-                                    Fluttertoast.showToast(
-                                        msg: "Looking for a Ride",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-                                        backgroundColor: Colors.white,
-                                        textColor: Colors.green,
-                                        fontSize: 16.0
-                                    );
-                                    MapUtils.openMap(user_lat!, user_long!,hosp_lat!,hosp_long!);
-                                  },
-                                  icon: Icon(Icons.local_hospital_outlined),
-                                  label: Text('Get a ride'),
-                                  style: ButtonStyle(
-                                      foregroundColor: MaterialStateProperty.all(Colors.white),
-                                      backgroundColor: MaterialStateProperty.all(Colors.red)
-                                  ),
+                                child: Text(text,style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
                                 ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 35.0,right: 35.0,top: 15.0),
-                                child: TextButton.icon(
-                                  onPressed: () {
-                                    // Contact Us -> Maybe call 108 or company
-                                    Fluttertoast.showToast(
-                                        msg: "Calling 108",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-                                        backgroundColor: Colors.white,
-                                        textColor: Colors.green,
-                                        fontSize: 16.0
-                                    );
-                                  },
-                                  icon: Icon(Icons.contact_phone_outlined),
-                                  label: Text('Contact Us'),
-                                  style: ButtonStyle(
-                                      foregroundColor: MaterialStateProperty.all(Colors.white),
-                                      backgroundColor: MaterialStateProperty.all(Colors.redAccent)
-                                  ),
+                                child: Text("${timeLeft} minutes",style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
                                 ),
                               ),
                             ],

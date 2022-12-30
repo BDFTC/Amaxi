@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import '../Widgets/loadingScreen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class loginAll extends StatefulWidget {
   const loginAll({Key? key}) : super(key: key);
@@ -15,11 +17,27 @@ class _loginAllState extends State<loginAll> {
   String user_pass='';
 
   Future LoginUser() async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context){
+          return progressIndicator(message: "Signing in");
+        }
+    );
     try{
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: user_email, password: user_pass);
       Navigator.pushNamed(context, 'user_dashboard');
     }
     on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      Fluttertoast.showToast(
+          msg: "Cannot signin",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.white,
+          textColor: Colors.green,
+          fontSize: 16.0
+      );
       print(e);
     }
   }
