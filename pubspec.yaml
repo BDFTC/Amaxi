@@ -50,14 +50,16 @@ dependencies:
   # Firebase database
   cloud_firestore: ^3.5.1
 
+  #Uncomment below
   # Google Maps
-  google_maps_flutter: ^2.2.1
-  geolocator: ^9.0.2
+  #google_maps_flutter: ^2.2.1
+  #geolocator: ^9.0.2
 
   # url launcher
   url_launcher: ^6.1.6
   flutter_map: ^3.1.0
   latlong2: ^0.8.1
+  flutter_mapbox_navigation: ^0.0.26
 
 dev_dependencies:
   flutter_test:

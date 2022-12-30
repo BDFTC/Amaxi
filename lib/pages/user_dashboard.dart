@@ -8,17 +8,18 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import 'package:latlong2/latlong.dart' as latLng;
 import 'package:flutter_map/plugin_api.dart';
+import 'package:flutter_mapbox_navigation/library.dart';
 
 class MapMarker {
-        final String? image;
-        final String? title;
-        final latLng.LatLng location;
+    final String? image;
+    final String? title;
+    final latLng.LatLng location;
 
-        MapMarker({
-            this.image,
-            required this.title,
-            required this.location,
-        });
+    MapMarker({
+        this.image,
+        required this.title,
+        required this.location,
+    });
 }
 class AppConstants {
   //anmol get these values
@@ -32,10 +33,11 @@ class AppConstants {
   static String user_name = "Varun Kainthla";
 
   //ignore these values
-  static String mapBoxAccessToken = 'YOUR_ACCESS_TOKEN';
+  static String mapBoxAccessToken = 'pk.eyJ1IjoicGxheWVybWF0aGluc29uIiwiYSI6ImNsMXFnMjRvbjEybHUza3BkanNjcTNxZjcifQ.JK4A3zEl7O9U7-8G48avag';
   static String mapBoxStyleId = 'clcahnp7s000415r4b12il5mr';
 
   static final userLocation = latLng.LatLng(user_lat, user_long);
+  static final driverLocation = latLng.LatLng(driver_lat, driver_long);
 
   static final mapMarkers = [
     MapMarker(
@@ -62,6 +64,93 @@ class userDashboard extends StatefulWidget {
 }
 
 class _userDashboardState extends State<userDashboard> {
+  //WayPoints for starting and ending of destination
+  latLng.LatLng source = AppConstants.userLocation;
+  latLng.LatLng destination = AppConstants.driverLocation;
+  late WayPoint sourceWayPoint, destinationWayPoint;
+  var waypoints = <WayPoint>[];
+
+  //Config variables for Mapbox Navigation
+  late MapBoxNavigation directions;
+  late MapBoxOptions _options;
+  late double distanceRemaining, durationRemaining;
+  late MapBoxNavigationViewController _controller;
+  final bool isMultipleStop = false;
+  String? instruction = "";
+  bool? arrived = false;
+  bool routeBuilt = false;
+  bool isNavigating = false;
+
+  Future<void> _onRouteEvent(e) async {
+    distanceRemaining = await directions.distanceRemaining;
+    durationRemaining = await directions.durationRemaining;
+
+    switch (e.eventType) {
+      case MapBoxEvent.progress_change:
+        var progressEvent = e.data as RouteProgressEvent;
+        arrived = progressEvent.arrived;
+        if (progressEvent.currentStepInstruction != null)
+        instruction = progressEvent.currentStepInstruction;
+        break;
+      case MapBoxEvent.route_building:
+      case MapBoxEvent.route_built:
+        routeBuilt = true;
+        break;
+      case MapBoxEvent.route_build_failed:
+        routeBuilt = false;
+        break;
+      case MapBoxEvent.navigation_running:
+        isNavigating = true;
+        break;
+      case MapBoxEvent.on_arrival:
+        arrived = true;
+        if (!isMultipleStop) {
+          await Future.delayed(Duration(seconds: 3));
+          await _controller.finishNavigation();
+        } else {}
+        break;
+      case MapBoxEvent.navigation_finished:
+      case MapBoxEvent.navigation_cancelled:
+        routeBuilt = false;
+        isNavigating = false;
+        break;
+      default:
+        break;
+    }
+    //refresh UI
+    setState(() {});
+    }
+
+    Future<void> initialize() async{
+        if(!mounted) return;
+        //Setup the directions
+        directions = MapBoxNavigation(onRouteEvent: _onRouteEvent);
+        var _options = MapBoxOptions(
+            zoom: 11.0,
+            // alternatives: true,
+            voiceInstructionsEnabled: true,
+            bannerInstructionsEnabled: true,
+            mode: MapBoxNavigationMode.drivingWithTraffic,
+            units: VoiceUnits.metric,
+            simulateRoute: true, //if you want to stop the car make it false
+            language: "en",
+            isOptimized: true
+        );
+
+        //Configure waypoints
+        sourceWayPoint = WayPoint(name:"Source", latitude: source.latitude, longitude: source.longitude);
+        destinationWayPoint = WayPoint(name:"Source", latitude: destination.latitude, longitude: destination.longitude);
+        waypoints.add(sourceWayPoint);
+        waypoints.add(destinationWayPoint);
+
+        //Start trip
+        await directions.startNavigation(wayPoints: waypoints, options: _options);
+    }
+    // void initState() {
+    //         super.initState();
+    //         initialize();
+    // }
+
 
   List<marker.Marker> myMarker = <marker.Marker>[];
 
@@ -81,6 +170,7 @@ class _userDashboardState extends State<userDashboard> {
         );
               
     }
+      initialize();
       print("Pressed BOIIIIIII");
     });
 
@@ -114,7 +204,18 @@ class _userDashboardState extends State<userDashboard> {
               ),
               MarkerLayer(
                 markers : myMarker ,
-              )
+              ),
+                //Here it starts
+              //   Container(
+              //   color: Colors.grey,
+              //   child: MapBoxNavigationView(
+              //       options: _options,
+              //       onRouteEvent: _onRouteEvent,
+              //       onCreated:
+              //           (MapBoxNavigationViewController controller) async {
+              //         _controller = controller;
+              //       }),
+              // ),
             ],
           ),
           ElevatedButton(
@@ -130,161 +231,3 @@ class _userDashboardState extends State<userDashboard> {
     );
   }
 }
-
-  //   return Scaffold(
-  //     backgroundColor: Colors.lightBlueAccent,
-  //     appBar: AppBar(
-  //       title: Text('User Dashboard'),
-  //       centerTitle: true,
-  //       backgroundColor: Colors.cyan,
-  //       elevation: 0.0,
-  //     ),
-  //     body: SingleChildScrollView(
-  //       child: Container(
-  //         child: Padding(
-  //           padding: const EdgeInsets.only(top: 30.0),
-  //           child: Column(
-  //             children: [
-  //               Center(
-  //                 // child: CircleAvatar(
-  //                 //   backgroundImage: AssetImage('assets/main_logo.jpeg'),
-  //                 //   radius: 100,
-  //                 // ),
-  //                 child: Lottie.network("https://assets10.lottiefiles.com/packages/lf20_W5Sk67.json",),
-  //                 heightFactor: 1.2,
-  //               ),
-  //               SizedBox(height: 30.0),
-  //               Container(
-  //                 height: 400,
-  //                 decoration: BoxDecoration(color: Colors.cyan,borderRadius: BorderRadius.circular(50)),
-  //                 child: Column(
-  //                   children: [
-  //                     Row(
-  //                       mainAxisAlignment: MainAxisAlignment.center,
-  //                       children: [
-  //                         Column(
-  //                           children: [
-  //                             Padding(
-  //                               padding: const EdgeInsets.only(left: 35.0,right: 35.0,top: 15.0),
-  //                               child: TextButton.icon(
-  //                                 onPressed: () {
-  //                                   // Book Ambulance and show Ambulance is on its way
-  //                                   Fluttertoast.showToast(
-  //                                       msg: "Looking for Ambulance",
-  //                                       toastLength: Toast.LENGTH_SHORT,
-  //                                       gravity: ToastGravity.CENTER,
-  //                                       backgroundColor: Colors.white,
-  //                                       textColor: Colors.green,
-  //                                       fontSize: 16.0
-  //                                   );
-  //                                   Navigator.pushNamed(context, 'user_book');
-  //                                 },
-  //                                 icon: Icon(Icons.local_hospital_outlined),
-  //                                 label: Text('Book Ambulance'),
-  //                                 style: ButtonStyle(
-  //                                     foregroundColor: MaterialStateProperty.all(Colors.white),
-  //                                     backgroundColor: MaterialStateProperty.all(Colors.red)
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                             Padding(
-  //                               padding: const EdgeInsets.only(left: 35.0,right: 35.0,top: 15.0),
-  //                               child: TextButton.icon(
-  //                                 onPressed: () {
-  //                                   // Contact Us -> Maybe call 108 or company
-  //                                   Fluttertoast.showToast(
-  //                                       msg: "Calling 108",
-  //                                       toastLength: Toast.LENGTH_SHORT,
-  //                                       gravity: ToastGravity.CENTER,
-  //                                       backgroundColor: Colors.white,
-  //                                       textColor: Colors.green,
-  //                                       fontSize: 16.0
-  //                                   );
-  //                                 },
-  //                                 icon: Icon(Icons.contact_phone_outlined),
-  //                                 label: Text('Contact Us'),
-  //                                 style: ButtonStyle(
-  //                                     foregroundColor: MaterialStateProperty.all(Colors.white),
-  //                                     backgroundColor: MaterialStateProperty.all(Colors.redAccent)
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           ],
-  //                         ),
-  //
-  //                       ],
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.only(left: 35.0,right: 35.0,top: 15.0),
-  //                       child: Row(
-  //                         children: [
-  //                           Text("Don't know about us yet?",style: TextStyle(
-  //                             fontWeight: FontWeight.w700,
-  //                             fontStyle: FontStyle.italic,
-  //                             color: Colors.white,
-  //                             fontSize: 20,
-  //                           ),
-  //                           ),
-  //                           TextButton(
-  //                             onPressed: () async {
-  //                               // Can give link to a webpage about amaxi
-  //                               final url='http://twitter.com';
-  //
-  //                               if (await canLaunchUrl(Uri.parse(url))){
-  //                                 await launch(url);
-  //                               }
-  //                             },
-  //                             child: Text('Click here',style: TextStyle(
-  //                                 fontStyle: FontStyle.italic,
-  //                                 fontWeight: FontWeight.w400,
-  //                                 color: Colors.blueGrey,
-  //                                 fontSize: 18,
-  //                                 decoration: TextDecoration.underline
-  //                             )),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     TextButton(
-  //                       onPressed: () async {
-  //                         // give a link to utter shit
-  //                         final url='http://twitter.com';
-  //
-  //                         if (await canLaunchUrl(Uri.parse(url))){
-  //                         await launch(url);
-  //                         }
-  //                       },
-  //                       child: Text('Privacy Policy',style: TextStyle(
-  //                           fontSize: 15,
-  //                           fontWeight: FontWeight.w400,
-  //                           decoration: TextDecoration.underline,
-  //                           color: Colors.blueGrey
-  //                       ),
-  //                       ),
-  //                     ),
-  //                     TextButton(
-  //                       onPressed: () async {
-  //                         // give alink to utter bullshit
-  //                         final url='http://twitter.com';
-  //
-  //                         if (await canLaunchUrl(Uri.parse(url))){
-  //                         await launch(url);
-  //                         }
-  //                       },
-  //                       child: Text('Terma and Conditions',style: TextStyle(
-  //                           fontSize: 15,
-  //                           fontWeight: FontWeight.w400,
-  //                           decoration:TextDecoration.underline,
-  //                           color: Colors.blueGrey
-  //                       ),
-  //                       ),
-  //                     )
-  //                   ],
-  //                 ),
-  //               )
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
