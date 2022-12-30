@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -19,6 +20,27 @@ class _userLoginState extends State<userLogin> {
   String user_name='';
   String user_number='';
 
+  Future createUser ({required String name, required String email, required String phone}) async  {
+    final docUser=FirebaseFirestore.instance.collection('users').doc();
+
+    final user=User(
+      id: docUser.id,
+      name: name,
+      email: email,
+      phone: phone
+    );
+    final json=user.toJson();
+    await docUser.set(json);
+  }
+
+  Future writeUser(User user) async {
+    final docUser = FirebaseFirestore.instance.collection('users').doc();
+    user.id=docUser.id;
+
+    final json=user.toJson();
+    await docUser.set(json);
+  }
+
   Future userRegister() async {
     showDialog(
         context: context,
@@ -29,6 +51,12 @@ class _userLoginState extends State<userLogin> {
     );
     try{
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: user_email, password: user_pass);
+      final user=User(
+        name: user_name,
+        email: user_email,
+        phone: user_number
+      );
+      writeUser(user);
       Navigator.pushNamed(context, 'main_login');
     } on FirebaseAuthException catch (e){
       Navigator.pop(context);
@@ -160,4 +188,25 @@ class _userLoginState extends State<userLogin> {
       ),
     );
   }
+}
+
+class User {
+  String id;
+  final String name;
+  final String email;
+  final String phone;
+
+  User({
+    this.id='',
+    required this.name,
+    required this.email,
+    required this.phone
+});
+
+  Map<String,dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'email': email,
+    'phone': phone
+  };
 }
