@@ -56,14 +56,14 @@ class AppConstants {
   ];
 }
 
-class userDashboard extends StatefulWidget {
-  const userDashboard({Key? key}) : super(key: key);
+class driverDashboard extends StatefulWidget {
+  const driverDashboard({Key? key}) : super(key: key);
 
   @override
-  State<userDashboard> createState() => _userDashboardState();
+  State<driverDashboard> createState() => _driverDashboardState();
 }
 
-class _userDashboardState extends State<userDashboard> {
+class _driverDashboardState extends State<driverDashboard> {
   //WayPoints for starting and ending of destination
   latLng.LatLng source = AppConstants.userLocation;
   latLng.LatLng destination = AppConstants.driverLocation;
@@ -180,7 +180,7 @@ class _userDashboardState extends State<userDashboard> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 33, 32, 32),
-        title: Text("Hey " + AppConstants.user_name),
+        title: Text("Hey " + AppConstants.driver_name),
         automaticallyImplyLeading: false,
       ),
       body: Stack(
