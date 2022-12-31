@@ -38,6 +38,7 @@ class AppConstants {
 
   static final userLocation = latLng.LatLng(user_lat, user_long);
   static final driverLocation = latLng.LatLng(driver_lat, driver_long);
+  static final hospitalLocation = latLng.LatLng(hosp_lat, hosp_long);
 
   static final mapMarkers = [
     MapMarker(
@@ -52,7 +53,7 @@ class AppConstants {
     MapMarker(
         title: "Hospital", 
         location:latLng.LatLng(hosp_lat, hosp_long)
-    )
+    ),
   ];
 }
 
@@ -65,9 +66,10 @@ class userDashboard extends StatefulWidget {
 
 class _userDashboardState extends State<userDashboard> {
   //WayPoints for starting and ending of destination
-  latLng.LatLng source = AppConstants.userLocation;
-  latLng.LatLng destination = AppConstants.driverLocation;
-  late WayPoint sourceWayPoint, destinationWayPoint;
+  latLng.LatLng source = AppConstants.driverLocation;
+  latLng.LatLng destination = AppConstants.hospitalLocation;
+  latLng.LatLng stop1 = AppConstants.userLocation;
+  late WayPoint sourceWayPoint, destinationWayPoint, stop1Point;
   var waypoints = <WayPoint>[];
 
   //Config variables for Mapbox Navigation
@@ -139,10 +141,12 @@ class _userDashboardState extends State<userDashboard> {
 
         //Configure waypoints
         sourceWayPoint = WayPoint(name:"Source", latitude: source.latitude, longitude: source.longitude);
-        destinationWayPoint = WayPoint(name:"Source", latitude: destination.latitude, longitude: destination.longitude);
-        waypoints.add(sourceWayPoint);
-        waypoints.add(destinationWayPoint);
+        destinationWayPoint = WayPoint(name:"Destination", latitude: destination.latitude, longitude: destination.longitude);
+        stop1Point = WayPoint(name: "User", latitude: stop1.latitude, longitude: stop1.longitude);
 
+        waypoints.add(sourceWayPoint);
+        waypoints.add(stop1Point);
+        waypoints.add(destinationWayPoint);
         //Start trip
         await directions.startNavigation(wayPoints: waypoints, options: _options);
     }
