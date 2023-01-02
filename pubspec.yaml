@@ -87,7 +87,6 @@ flutter:
   assets:
     - assets/main_logo.jpeg
     - assets/marker.png
-    - accidentModel/model.py
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
