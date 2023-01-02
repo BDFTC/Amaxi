@@ -4,8 +4,6 @@ import { initializeApp } from 'firebase/app'
 import { getDatabase } from "firebase/database";
 import { get } from 'http';
 
-a
-
 const firebaseApp = initializeApp({
     apiKey: "AIzaSyD359pL2WsKIFLwYiLUONHtV5HCQT8vXWE",
     authDomain: "amaxi-51d05.firebaseio.com",

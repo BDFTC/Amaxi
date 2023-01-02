@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:latlong2/latlong.dart' as latLng;
 import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_mapbox_navigation/library.dart';
+import 'dart:math';
 
 class MapMarker {
     final String? image;
@@ -65,6 +66,17 @@ class driverDashboard extends StatefulWidget {
 
 class _driverDashboardState extends State<driverDashboard> {
   //WayPoints for starting and ending of destination
+
+double calculateDistance(latitude1, latitude2, longitude1, longitude2) { //in Km
+    var latitude1Radians = latitude1 / 57.29577951;
+    var latitude2Radians = latitude2 / 57.29577951;
+    var longitude1Radians = longitude1 / 57.29577951;
+    var longitude2Radians = longitude2 / 57.29577951;
+    var difference = longitude2Radians - longitude1Radians;
+    var distance = 3963 * acos((sin(latitude2Radians) * sin(latitude2Radians)) + cos(latitude1Radians) * cos(latitude2Radians) * cos(difference));
+    return distance;
+}
+
   latLng.LatLng source = AppConstants.userLocation;
   latLng.LatLng destination = AppConstants.driverLocation;
   late WayPoint sourceWayPoint, destinationWayPoint;
