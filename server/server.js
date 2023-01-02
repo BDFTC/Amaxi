@@ -1,29 +1,39 @@
 const path = require('path')
 const bodyParser = require('body-parser')
-import { initializeApp } from 'firebase/app'
-import { getDatabase } from "firebase/database";
-import { get } from 'http';
+const { initializeApp } = require('firebase/app')
+const { getDatabase, ref, set, child, get } = require("firebase/database")
+// const { get } = require('http')
+var admin = require("firebase-admin");
 
-const firebaseApp = initializeApp({
-    apiKey: "AIzaSyD359pL2WsKIFLwYiLUONHtV5HCQT8vXWE",
-    authDomain: "amaxi-51d05.firebaseio.com",
-    projectId: "amaxi-51d05",
-    storageBucket: "amaxi-51d05.appspot.com",
-    messagingSenderId: ""
+var serviceAccount = require("./serviceAccountKey.json");
+var placeCoordinates = [
+    [76.75124201279625, 30.728236491597823],
+    [76.72927199143861, 30.747064501611757],
+    [76.6999204261629, 30.734430103716143],
+    [76.64661714715938, 30.73122472707027],
+    [76.8104981000791, 30.7449068259825],
+    [76.6024981000791, 30.7929068259825],
+    [76.6024981000791, 30.7449068259825],
+    [76.58276136610599, 30.713619201119533],
+    [76.54854811461628, 30.703607844458176]
+]
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://amaxi-51d05.firebaseio.com',
+    authDomain: 'amaxi-51d05.firebaseapp.com'
 });
 
-//driverHas Email, Password, Name, phoneNumber, carModel
+const driverIdCollectionId = "356CJdsCMwffLhV9SDx6";
 
-const database = getDatabase();
+const db = admin.firestore();
 
-function writeDriverData(driverId, name, email, password, phoneNumber, carModel) {
-  const db = getDatabase();
+function writeDriverData(parameter, location) {
   set(ref(db, 'driver/' + userId), {
-    name: name,
-    email: email,
-    password: password,
-    phoneNumber: phoneNumber,
-    carModel: carModel
+    name: parameter.name,
+    email: parameter.email,
+    phone: parameter.phone,
+    driver_car: parameter.driver_car,
   });
 }
 
@@ -37,17 +47,20 @@ function calculateDistance(latitude1, latitude2, longitude1, longitude2) { //in 
     return distance;
 }
 
-
-const dbRef = ref(database);
-get(child(dbRef, `driver/${driverId}`)).then((snapshot) => {
-  if (snapshot.exists()) {
-    console.log(snapshot.val());
-  } else {
-    console.log("No data available");
-  }
-}).catch((error) => {
-    console.error(error);
-});
+async function readDriver(driverId){
+    const driversRef = db.collection("drivers");
+    const response = await driversRef.get();
+    let responseArr = [];
+    response.forEach(doc => {
+        responseArr.push(doc.data());
+        // console.log(doc.data());
+    })
+    return responseArr;
+}
+async function writeDriver(driverId, locationGiven){
+    const driversRef = db.collection("drivers");
+    // driversRef.doc(driverId).update({location:locationGiven});
+}
 
 function calculateLongitudeLatitude(long1, lat1, distance) {
     var brng = Math.random() * Math.PI * 2;
@@ -68,15 +81,14 @@ function calculateLongitudeLatitude(long1, lat1, distance) {
     var long2Degree = long2 * 180 / Math.PI;
 
     return [lat2Degree, long2Degree];
-
 }
 
+var driverCoordinates = [];
 function getAccidentListFromModel() {
     var date_obj = new Date(); //gets today's date
     var hours = date_obj.getHours();
     var minutes = date_obj.getMinutes();
 
-    const driverCoordinates = [];
 
     var total = (60 * hours + minutes);
     var counterTillNow = Math.floor(total / 15);
@@ -101,12 +113,12 @@ function getAccidentListFromModel() {
         // var temporaryLongitude=placeCoordinates[tempData[i][0]][0]+(tempData[i][1])/(111111* Math.cos(Math.PI*placeCoordinates[tempData[i][0]][1])/180);
         driverCoordinates.push([arrayLatLong[0], arrayLatLong[1]]);
     }
+        console.log("driver coordinates predicted")
+        console.log(driverCoordinates)
 
     });
     return driverCoordinates;
 }
-
-function getAllDatabaseValues(){} //returns ALL DRIVER OBJECTS
 
 function requiredDriver(){
     var allDriverObject = getAllDatabaseValues();
@@ -127,3 +139,9 @@ function requiredDriver(){
 
     }
 }
+const driverIds = readDriver(driverIdCollectionId);
+driverIds.then((data) =>{
+    var requiredObject = data[0];
+    var accidentList = getAccidentListFromModel();
+    writeDriver(requiredObject, accidentList)
+});
