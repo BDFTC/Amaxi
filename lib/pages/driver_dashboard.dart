@@ -10,6 +10,7 @@ import 'package:latlong2/latlong.dart' as latLng;
 import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_mapbox_navigation/library.dart';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapMarker {
     final String? image;
@@ -22,14 +23,30 @@ class MapMarker {
         required this.location,
     });
 }
+
+// Globals
+var dLat,dLong;
+
 class AppConstants {
-  //anmol get these values
-  static double user_lat = 30.641535; // lat of user
-  static double user_long = 76.813496; // long of user
-  static double hosp_lat = 30.7055; // lat for nearest hospital
-  static double hosp_long = 76.8013; // long for nearest hospital
-  static double driver_lat = 30.66332;
-  static double driver_long = 76.8068;
+
+  static void readDriver() {
+    var driversRef = FirebaseFirestore.instance.collection("drivers");
+    var response =  driversRef.get();
+    var responseArr = [];
+    response.then((value) => {
+      value.docs.forEach((result) {
+        dLat=result.data()['location'][0];
+        dLong=result.data()['location'][1];
+      })
+    });
+  }
+
+  static double user_long = 76.75124201279625; // lat of user
+  static double user_lat = 30.728236491597823; // long of user
+  static double hosp_long = 76.76938534904092; // lat for nearest hospital
+  static double hosp_lat = 30.724073914302423; // long for nearest hospital
+  static double driver_lat = dLat;
+  static double driver_long = dLong;
 
   static String driver_name = "Varun Kainthla";
 
@@ -66,6 +83,13 @@ class driverDashboard extends StatefulWidget {
 
 class _driverDashboardState extends State<driverDashboard> {
   //WayPoints for starting and ending of destination
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    AppConstants.readDriver();
+  }
 
 double calculateDistance(latitude1, latitude2, longitude1, longitude2) { //in Km
     var latitude1Radians = latitude1 / 57.29577951;

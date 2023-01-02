@@ -13,7 +13,7 @@ class userBook extends StatefulWidget {
 
 class _userBookState extends State<userBook> {
 
-  int timeLeft=10; // This time will be taken from google maps
+  int timeLeft=10;
   String text='Your Ambulance will arrive in';
 
   void _countDown() {
@@ -122,7 +122,7 @@ class _userBookState extends State<userBook> {
                             TextButton(
                               onPressed: () async {
                                 // Can give link to a webpage about amaxi
-                                final url='http://twitter.com';
+                                final url='https://devpost.com/';
 
                                 if (await canLaunchUrl(Uri.parse(url))){
                                   await launch(url);
@@ -141,8 +141,7 @@ class _userBookState extends State<userBook> {
                       ),
                       TextButton(
                         onPressed: () async {
-                          // give a link to utter shit
-                          final url='http://twitter.com';
+                          final url='https://en.wikipedia.org/wiki/Privacy_policy';
 
                           if (await canLaunchUrl(Uri.parse(url))){
                             await launch(url);
@@ -158,14 +157,13 @@ class _userBookState extends State<userBook> {
                       ),
                       TextButton(
                         onPressed: () async {
-                          // give alink to utter bullshit
-                          final url='http://twitter.com';
+                          final url='https://en.wikipedia.org/wiki/Terms_of_service';
 
                           if (await canLaunchUrl(Uri.parse(url))){
                             await launch(url);
                           }
                         },
-                        child: Text('Terma and Conditions',style: TextStyle(
+                        child: Text('Terms and Conditions',style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             decoration:TextDecoration.underline,

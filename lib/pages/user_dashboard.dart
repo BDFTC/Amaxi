@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:amaxi/Maps/mapsUtil.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -11,7 +13,10 @@ import 'package:latlong2/latlong.dart' as latLng;
 import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_mapbox_navigation/library.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+======= 
 String? req_email;
+
 
 class MapMarker {
     final String? image;
@@ -24,16 +29,36 @@ class MapMarker {
         required this.location,
     });
 }
+
+// Globals
+var dLat=30.7055,dLong=76.8013;
+
 class AppConstants {
-  //anmol get these values
+
+  static void readDriver() {
+    var driversRef = FirebaseFirestore.instance.collection("drivers");
+    var response =  driversRef.get();
+    var responseArr = [];
+    response.then((value) => {
+      value.docs.forEach((result) {
+        dLat=result.data()['location'][0];
+        dLong=result.data()['location'][1];
+      })
+    });
+  }
+
   static double user_lat = 30.641535; // lat of user
   static double user_long = 76.813496; // long of user
   static double hosp_lat = 30.7055; // lat for nearest hospital
   static double hosp_long = 76.8013; // long for nearest hospital
-  static double driver_lat = 30.66332;
-  static double driver_long = 76.8068;
+  static double driver_lat = 30.7055;
+  static double driver_long = 76.8013;
 
-  static String user_name = "Varun Kainthla";
+
+  static var cur_user=FirebaseAuth.instance.currentUser?.email?.split('@')[0];
+  static var q=FirebaseFirestore.instance.collection('drivers');
+
+  static String? user_name = cur_user;
 
   //ignore these values
   static String mapBoxAccessToken = 'pk.eyJ1IjoicGxheWVybWF0aGluc29uIiwiYSI6ImNsMXFnMjRvbjEybHUza3BkanNjcTNxZjcifQ.JK4A3zEl7O9U7-8G48avag';
@@ -68,6 +93,13 @@ class userDashboard extends StatefulWidget {
 }
 
 class _userDashboardState extends State<userDashboard> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    AppConstants.readDriver();
+  }
     double calculateDistance(latitude1, latitude2, longitude1, longitude2) { //in Km
         var latitude1Radians = latitude1 / 57.29577951;
         var latitude2Radians = latitude2 / 57.29577951;
@@ -147,6 +179,7 @@ class _userDashboardState extends State<userDashboard> {
     setState(() {});
     }
 
+
     Future<void> initialize() async{
         if(!mounted) return;
         //Setup the directions
@@ -208,7 +241,7 @@ class _userDashboardState extends State<userDashboard> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 33, 32, 32),
-        title: Text("Hey " + AppConstants.user_name),
+        title: Text("Hey ${AppConstants.user_name}"),
         automaticallyImplyLeading: false,
       ),
       body: Stack(
