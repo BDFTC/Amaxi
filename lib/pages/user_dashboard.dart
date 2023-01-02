@@ -10,6 +10,7 @@ import 'dart:async';
 import 'package:latlong2/latlong.dart' as latLng;
 import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_mapbox_navigation/library.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapMarker {
     final String? image;
@@ -75,6 +76,17 @@ class _userDashboardState extends State<userDashboard> {
         var distance = 3963 * acos((sin(latitude2Radians) * sin(latitude2Radians)) + cos(latitude1Radians) * cos(latitude2Radians) * cos(difference));
         return distance;
     }
+
+    void readDriver(String aditi) {
+    var driversRef = FirebaseFirestore.instance.collection("drivers");
+    var response =  driversRef.get();
+    var responseArr = [];
+    response.then((value) => {
+      value.docs.forEach((result) {
+        print(result.data());
+      })
+    });
+  }
 
   //WayPoints for starting and ending of destination
   latLng.LatLng source = AppConstants.driverLocation;
