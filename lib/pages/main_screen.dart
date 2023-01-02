@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class home extends StatefulWidget {
   const home({Key? key}) : super(key: key);
@@ -103,8 +104,12 @@ class _homeState extends State<home> {
                             ),
                             ),
                             TextButton(
-                              onPressed: () {
-                                // Can give link to a webpage about amaxi
+                              onPressed: () async{
+                                const url='https://devpost.com';
+
+                                if (await canLaunchUrl(Uri.parse(url))){
+                                await launch(url);
+                                }
                               },
                               child: Text('Click here',style: TextStyle(
                                   fontStyle: FontStyle.italic,
@@ -118,8 +123,12 @@ class _homeState extends State<home> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {
-                          // give a link to utter shit
+                        onPressed: () async{
+                          final url='https://en.wikipedia.org/wiki/Privacy_policy';
+
+                          if (await canLaunchUrl(Uri.parse(url))){
+                            await launch(url);
+                          }
                         },
                         child: Text('Privacy Policy',style: TextStyle(
                             fontSize: 15,
@@ -130,10 +139,14 @@ class _homeState extends State<home> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {
-                          // give alink to utter bullshit
+                        onPressed: () async{
+                          final url='https://en.wikipedia.org/wiki/Terms_of_service';
+
+                          if (await canLaunchUrl(Uri.parse(url))){
+                            await launch(url);
+                          }
                         },
-                        child: Text('Terma and Conditions',style: TextStyle(
+                        child: Text('Terms and Conditions',style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             decoration:TextDecoration.underline,

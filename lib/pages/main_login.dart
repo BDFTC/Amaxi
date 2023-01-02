@@ -68,8 +68,6 @@ class _loginAllState extends State<loginAll> {
                 ),
                 SizedBox(height: 50.0),
                 Container(
-                  // width: MediaQuery.of(context).size.width,
-                  // height: MediaQuery.of(context).size.height,
                   height: 400,
                   decoration: BoxDecoration(color: Colors.cyan,borderRadius: BorderRadius.circular(50)),
                   child: Column(
