@@ -16,7 +16,7 @@ Future main() async {
   await Firebase.initializeApp();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: 'main_screen',
+    initialRoute: 'user_dashboard',
     routes: {
       'user_login': (context) => userLogin(), // user register
       'driver_login': (context) => driverLogin(), // driver register
