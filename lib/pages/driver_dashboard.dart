@@ -39,7 +39,7 @@ class AppConstants {
 
   static final userLocation = latLng.LatLng(user_lat, user_long);
   static final driverLocation = latLng.LatLng(driver_lat, driver_long);
-  static final hospitalLocation = latLng.LatLng(hosp_lat, hosp_long);
+
   static final mapMarkers = [
     MapMarker(
         title:'User Location',
@@ -77,12 +77,9 @@ double calculateDistance(latitude1, latitude2, longitude1, longitude2) { //in Km
     return distance;
 }
 
-  latLng.LatLng source = AppConstants.driverLocation;
-  latLng.LatLng destination = AppConstants.hospitalLocation;
-  latLng.LatLng stop1 = AppConstants.userLocation;
-  late WayPoint sourceWayPoint, destinationWayPoint, stop1Point;
-
-
+  latLng.LatLng source = AppConstants.userLocation;
+  latLng.LatLng destination = AppConstants.driverLocation;
+  late WayPoint sourceWayPoint, destinationWayPoint;
   var waypoints = <WayPoint>[];
 
   //Config variables for Mapbox Navigation
@@ -154,12 +151,10 @@ double calculateDistance(latitude1, latitude2, longitude1, longitude2) { //in Km
 
         //Configure waypoints
         sourceWayPoint = WayPoint(name:"Source", latitude: source.latitude, longitude: source.longitude);
-        destinationWayPoint = WayPoint(name:"Destination", latitude: destination.latitude, longitude: destination.longitude);
-        stop1Point = WayPoint(name: "User", latitude: stop1.latitude, longitude: stop1.longitude);
-
+        destinationWayPoint = WayPoint(name:"Source", latitude: destination.latitude, longitude: destination.longitude);
         waypoints.add(sourceWayPoint);
-        waypoints.add(stop1Point);
         waypoints.add(destinationWayPoint);
+
         //Start trip
         await directions.startNavigation(wayPoints: waypoints, options: _options);
     }
