@@ -9,12 +9,6 @@ This app helps in getting fast and cost effective ambulance
 services using its advance working mechanism and ML model.
 
 
-## Machine Learning Model
-
-The Machine Learning model predicts the probability of accident in
-a particular region based on a large dataset. The model makes use
-of various different concerns such as time, area and many more to
-predict the accident probability. 
 ## Flutter
 
 This application is being designed and created on Flutter which
