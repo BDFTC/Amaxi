@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:amaxi/Maps/mapsUtil.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,16 @@ class userDashboard extends StatefulWidget {
 }
 
 class _userDashboardState extends State<userDashboard> {
+    double calculateDistance(latitude1, latitude2, longitude1, longitude2) { //in Km
+        var latitude1Radians = latitude1 / 57.29577951;
+        var latitude2Radians = latitude2 / 57.29577951;
+        var longitude1Radians = longitude1 / 57.29577951;
+        var longitude2Radians = longitude2 / 57.29577951;
+        var difference = longitude2Radians - longitude1Radians;
+        var distance = 3963 * acos((sin(latitude2Radians) * sin(latitude2Radians)) + cos(latitude1Radians) * cos(latitude2Radians) * cos(difference));
+        return distance;
+    }
+
   //WayPoints for starting and ending of destination
   latLng.LatLng source = AppConstants.driverLocation;
   latLng.LatLng destination = AppConstants.hospitalLocation;

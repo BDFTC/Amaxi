@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:latlong2/latlong.dart' as latLng;
 import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_mapbox_navigation/library.dart';
+import 'dart:math';
 
 class MapMarker {
     final String? image;
@@ -38,7 +39,7 @@ class AppConstants {
 
   static final userLocation = latLng.LatLng(user_lat, user_long);
   static final driverLocation = latLng.LatLng(driver_lat, driver_long);
-
+  static final hospitalLocation = latLng.LatLng(hosp_lat, hosp_long);
   static final mapMarkers = [
     MapMarker(
         title:'User Location',
@@ -65,9 +66,23 @@ class driverDashboard extends StatefulWidget {
 
 class _driverDashboardState extends State<driverDashboard> {
   //WayPoints for starting and ending of destination
-  latLng.LatLng source = AppConstants.userLocation;
-  latLng.LatLng destination = AppConstants.driverLocation;
-  late WayPoint sourceWayPoint, destinationWayPoint;
+
+double calculateDistance(latitude1, latitude2, longitude1, longitude2) { //in Km
+    var latitude1Radians = latitude1 / 57.29577951;
+    var latitude2Radians = latitude2 / 57.29577951;
+    var longitude1Radians = longitude1 / 57.29577951;
+    var longitude2Radians = longitude2 / 57.29577951;
+    var difference = longitude2Radians - longitude1Radians;
+    var distance = 3963 * acos((sin(latitude2Radians) * sin(latitude2Radians)) + cos(latitude1Radians) * cos(latitude2Radians) * cos(difference));
+    return distance;
+}
+
+  latLng.LatLng source = AppConstants.driverLocation;
+  latLng.LatLng destination = AppConstants.hospitalLocation;
+  latLng.LatLng stop1 = AppConstants.userLocation;
+  late WayPoint sourceWayPoint, destinationWayPoint, stop1Point;
+
+
   var waypoints = <WayPoint>[];
 
   //Config variables for Mapbox Navigation
@@ -139,10 +154,12 @@ class _driverDashboardState extends State<driverDashboard> {
 
         //Configure waypoints
         sourceWayPoint = WayPoint(name:"Source", latitude: source.latitude, longitude: source.longitude);
-        destinationWayPoint = WayPoint(name:"Source", latitude: destination.latitude, longitude: destination.longitude);
-        waypoints.add(sourceWayPoint);
-        waypoints.add(destinationWayPoint);
+        destinationWayPoint = WayPoint(name:"Destination", latitude: destination.latitude, longitude: destination.longitude);
+        stop1Point = WayPoint(name: "User", latitude: stop1.latitude, longitude: stop1.longitude);
 
+        waypoints.add(sourceWayPoint);
+        waypoints.add(stop1Point);
+        waypoints.add(destinationWayPoint);
         //Start trip
         await directions.startNavigation(wayPoints: waypoints, options: _options);
     }
