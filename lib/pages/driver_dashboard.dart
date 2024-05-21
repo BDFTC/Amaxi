@@ -25,28 +25,34 @@ class MapMarker {
 }
 
 // Globals
-var dLat,dLong;
+
 
 class AppConstants {
+    var dLat, dLong;
 
-  static void readDriver() {
-    var driversRef = FirebaseFirestore.instance.collection("drivers");
-    var response =  driversRef.get();
-    var responseArr = [];
-    response.then((value) => {
-      value.docs.forEach((result) {
-        dLat=result.data()['location'][0];
-        dLong=result.data()['location'][1];
-      })
-    });
-  }
+    static void readDriver() {
+        // double dLat = 0.0, dLong = 0.0;
+        // var driversRef = FirebaseFirestore.instance.collection("drivers");
+        // var response =  driversRef.get();
+        // var responseArr = [];
+        // print("___________________RUN________________________");
+        // print(response);
+        // print("_______________________________________");
+        // response.then((value) => {
+        //   value.docs.forEach((result) {
+        //     dLat = result.data()['location'][0];
+        //     dLong = result.data()['location'][1];
+        //   })
+        // });
+        print("Spare me");
+    }
 
   static double user_long = 76.75124201279625; // lat of user
   static double user_lat = 30.728236491597823; // long of user
   static double hosp_long = 76.76938534904092; // lat for nearest hospital
   static double hosp_lat = 30.724073914302423; // long for nearest hospital
-  static double driver_lat = dLat;
-  static double driver_long = dLong;
+  static double driver_lat = 30.724073914302423;
+  static double driver_long = 76.76938534904092;
 
   static String driver_name = "Varun Kainthla";
 
